@@ -14,19 +14,40 @@ public class HeapBasedSettleUpStrategy implements SettleUpStrategy{
         HashMap<User,Double> outStandingAmountMap=new HashMap<>();
         //loop through all expenses and userExpenses for each expense,
         // and calculate the final outstanding amount for each user
+        int count=0;
         for(Expense expense:expenses)
         {
             for(UserExpense userExpense:expense.getUserExpenses())
             {
-                double existingAmount=outStandingAmountMap.getOrDefault(userExpense.getUser(),(double)0);
-                if(userExpense.getUserExpenseType().equals(UserExpenseType.PAID))
-                    existingAmount=userExpense.getAmount()+existingAmount;
-                else{
-                    existingAmount=existingAmount-userExpense.getAmount();
+                if(userExpense.getUserExpenseType()==UserExpenseType.INCLUDE)
+                {
+                    count++;
                 }
+            }
+        }
+        for(Expense expense:expenses)
+        {
+            double totalAmount=expense.getAmount();
+            double amountForEachUser=totalAmount/count;
+            System.out.println("AMOUNT "+amountForEachUser);
+            for(UserExpense userExpense:expense.getUserExpenses())
+            {
+                if(userExpense.getUserExpenseType()==UserExpenseType.INCLUDE)
+                    outStandingAmountMap.put(userExpense.getUser(),outStandingAmountMap.getOrDefault(userExpense.getUser(),0.0)-amountForEachUser);
+
+            }
+            for(UserExpense userExpense:expense.getUserExpenses())
+            {
+                double existingAmount=outStandingAmountMap.getOrDefault(userExpense.getUser(),(double)0);
+                if(userExpense.getUserExpenseType().equals(UserExpenseType.INCLUDE))
+                    existingAmount=userExpense.getAmount()+existingAmount;
+//                else{
+//                    existingAmount=existingAmount-userExpense.getAmount();
+//                }
                 outStandingAmountMap.put(userExpense.getUser(),existingAmount);
             }
         }
+
         //priorityqueue will have pair of user and value
         //MaxHeap-> contains all the users with positive balance
         PriorityQueue<Map.Entry<User,Double>> maxHeap=new PriorityQueue<>((a,b)->{
@@ -41,6 +62,7 @@ public class HeapBasedSettleUpStrategy implements SettleUpStrategy{
         //populate the heaps using the values from map
         for(Map.Entry<User,Double> entry:outStandingAmountMap.entrySet())
         {
+            System.out.println(entry.getKey().getName()+" "+entry.getValue());
             if(entry.getValue()<0)
             {
                 minHeap.add(entry);
@@ -64,7 +86,8 @@ public class HeapBasedSettleUpStrategy implements SettleUpStrategy{
             TransactionDTO transaction=new TransactionDTO(
                     toBePaidUser.getKey().getName(),
                     paidUser.getKey().getName(),
-                    Math.min(Math.abs(toBePaidUser.getValue()),paidUser.getValue())
+                    Math.min(Math.abs(toBePaidUser.getValue()),paidUser.getValue()),
+                    expenses.get(0).getCurrency()
             );
             transactions.add(transaction);
             double newBalance=paidUser.getValue()+toBePaidUser.getValue();
@@ -82,7 +105,7 @@ public class HeapBasedSettleUpStrategy implements SettleUpStrategy{
                 maxHeap.add(paidUser);
             }
         }
-        //System.out.println(transactions);
+        System.out.println(transactions);
         return transactions;
     }
 }

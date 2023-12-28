@@ -3,6 +3,7 @@ package com.project.Splitwise.service;
 import com.project.Splitwise.dto.TransactionDTO;
 import com.project.Splitwise.exception.GroupNotFound;
 import com.project.Splitwise.model.Group;
+import com.project.Splitwise.model.User;
 import com.project.Splitwise.repositroy.GroupRepository;
 import com.project.Splitwise.service.strategy.SettleUpStrategy;
 import com.project.Splitwise.service.strategy.SettleUpStrategyFactory;
@@ -17,9 +18,9 @@ public class GroupServiceImpl implements GroupService{
     @Autowired
     private GroupRepository groupRepository;
     @Override
-    public List<TransactionDTO> settleUpByGroupId(int groupId) throws GroupNotFound {
+    public List<TransactionDTO> settleUpByGroupId(User groupOwner,int groupId) throws GroupNotFound {
         SettleUpStrategy strategy= SettleUpStrategyFactory.getSettUpStrategy();
-        Optional<Group> savedGroup=groupRepository.findById(groupId);
+        Optional<Group> savedGroup=groupRepository.findByIdAndGroupOwner(groupId,groupOwner);
         if(savedGroup.isEmpty())
         {
             throw new GroupNotFound("No group found for the given id :"+groupId);

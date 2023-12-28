@@ -1,9 +1,8 @@
 package com.project.Splitwise.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,5 +20,8 @@ public class UserExpense extends BaseModel{
 
     @ManyToOne
     private Expense expense;
+
+    @ManyToOne
+    private User createdBy;
 
 }

@@ -1,5 +1,6 @@
 package com.project.Splitwise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,13 @@ public class Expense extends BaseModel {
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
-
-    @OneToMany(mappedBy = "expense")
+    @JsonIgnore
+    @OneToMany(mappedBy = "expense" ,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserExpense> userExpenses;
 
+    @JsonIgnore
     @ManyToOne
     private Group group;
+    @ManyToOne
+    private User createdBy;
 }

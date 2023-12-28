@@ -1,16 +1,18 @@
 package com.project.Splitwise.model;
 
+import com.project.Splitwise.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @ToString
-@Entity(name="SPLITWISE_GROUP")
+    @Entity(name="SPLITWISE_GROUP")
 public class Group extends BaseModel{
 
     private String name;
@@ -22,10 +24,23 @@ public class Group extends BaseModel{
     @Enumerated(EnumType.STRING)
     private Currency defaultCurrency;
 
-    @OneToMany(mappedBy = "group")
+   @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
     private List<Expense> expenses;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="group_id")
     private List<User> users;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="group_owner")
+    private User groupOwner;
+
+    public List<UserDTO> getUsersDTOList() {
+        List<UserDTO> ans=new ArrayList<>();
+        for(User u:users)
+        {
+            ans.add(UserDTO.builder().id(u.getId()).name(u.getName()).build());
+        }
+        return ans;
+    }
 }
