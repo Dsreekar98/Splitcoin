@@ -23,4 +23,5 @@ public class GroupDTO {
     private double totalAmountSpent;
     private Currency defaultCurrency;
     private List<UserDTO> users;
+    private UserDTO createdBy;
 }

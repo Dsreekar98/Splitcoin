@@ -11,6 +11,7 @@ import com.project.Splitwise.repositroy.UserRepository;
 import com.project.Splitwise.service.GroupService;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -28,12 +29,15 @@ public class GroupController {
     private GroupRepository groupRepository;
     @Autowired
     private UserRepository userRepository;
-
     @GetMapping("/settleup/{groupId}")
     public ResponseEntity settleUp(Authentication authentication,@PathVariable int groupId) throws GroupNotFound {
         User userDetails=(User) authentication.getPrincipal();
-        List<TransactionDTO> transactions=groupService.settleUpByGroupId(userDetails,groupId);
-        return ResponseEntity.ok(transactions);
+        Optional<Group> group=groupRepository.findById(groupId);
+        if(group.get().getUsers().contains(userDetails)) {
+            List<TransactionDTO> transactions = groupService.settleUpByGroupId(group.get().getGroupOwner(), groupId);
+            return ResponseEntity.ok(transactions);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/creategroup")
@@ -44,7 +48,6 @@ public class GroupController {
         group.getUsers().add(userDetails);
         for(User u:group.getUsers())
         {
-
             User findUser=userRepository.findByEmail(u.getEmail());
             if(findUser==null)
             {
@@ -55,23 +58,17 @@ public class GroupController {
                 u.setId(findUser.getId());
             }
         }
-        //List<User> users=userRepository.saveAll(group.getUsers());
-       // group.setUsers(users);
-        System.out.println("creating group "+userDetails.getUsername());
         Group savedGroup=groupService.createGroup(group);
-        System.out.println("saved  "+savedGroup);
         return ResponseEntity.ok("");
     }
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/retrieveGroups")
+    @GetMapping("/v1/retrieveGroups")
     public ResponseEntity<List<GroupDTO>> retrieveGroups(Authentication authentication)
     {
         User userDetails=(User) authentication.getPrincipal();
         List<Group> groups=groupRepository.findByGroupOwner(userDetails);
         List<GroupDTO> groupDTOS=new ArrayList<>();
-
-        for(Group g:groups)
-        {
+        for(Group g:groups) {
             groupDTOS.add(new GroupDTO().builder()
                     .id(g.getId())
                     .createdAt(g.getCreatedAt())
@@ -83,7 +80,6 @@ public class GroupController {
                     .users(g.getUsersDTOList())
                     .build());
         }
-       // System.out.println(groups);
         return ResponseEntity.ok(groupDTOS);
     }
     @CrossOrigin(origins = "http://localhost:3000")
@@ -91,9 +87,34 @@ public class GroupController {
     public ResponseEntity<String> deleteGroup(Authentication authentication,@PathVariable int id)
     {
         User userdetail=(User)authentication.getPrincipal();
-
-        groupRepository.deleteByIdAndGroupOwner(id, userdetail);
-        return ResponseEntity.ok("");
+        Optional<Group> group=groupRepository.findById(id);
+        if(group.get().getGroupOwner().getId()==userdetail.getId()) {
+            groupRepository.deleteByIdAndGroupOwner(id, userdetail);
+            return ResponseEntity.ok("");
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
+    @GetMapping("/retrieveGroups")
+    public ResponseEntity<List<GroupDTO>> retrieveGroupsv2(Authentication authentication)
+    {
+        User userDetails=(User) authentication.getPrincipal();
+        List<Group> groups=groupRepository.findByGroupOwnerOrUsers(userDetails,userDetails);
+        List<GroupDTO> groupDTOS=new ArrayList<>();
+        for(Group g:groups)
+        {
+            groupDTOS.add(new GroupDTO().builder()
+                    .id(g.getId())
+                    .createdAt(g.getCreatedAt())
+                    .lastModifiedAt(g.getLastModifiedAt())
+                    .name(g.getName())
+                    .description(g.getDescription())
+                    .totalAmountSpent(g.getTotalAmountSpent())
+                    .defaultCurrency(g.getDefaultCurrency())
+                    .users(g.getUsersDTOList())
+                    .createdBy(g.getOwnerDTO())
+                    .build());
+        }
+        return ResponseEntity.ok(groupDTOS);
+    }
 }

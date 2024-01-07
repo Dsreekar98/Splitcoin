@@ -20,5 +20,6 @@ public class UserExpenseDTO {
     private UserExpenseType userExpenseType;
     private List<UserExpenseType> userExpenseTypeList;
     private Currency currency;
+    private String CreatedById;
 
 }

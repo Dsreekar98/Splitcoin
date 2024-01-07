@@ -1,6 +1,7 @@
 package com.project.Splitwise.dto;
 
 import com.project.Splitwise.model.Currency;
+import com.project.Splitwise.model.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -23,4 +24,5 @@ public class ExpenseDTO {
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
+    private String createdById;
 }

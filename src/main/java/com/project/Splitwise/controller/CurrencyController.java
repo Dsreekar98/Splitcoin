@@ -16,7 +16,6 @@ public class CurrencyController {
 
     @GetMapping("/availableCurrencies")
     public ResponseEntity<List<String>> retrieveSupportedCurrencies(){
-// Convert the enum values to a list of strings
         List<String> currencyList = new ArrayList<>();
         Currency[] currencies = Currency.values();
 

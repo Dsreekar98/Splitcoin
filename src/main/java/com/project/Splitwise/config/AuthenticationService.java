@@ -33,13 +33,14 @@ public class AuthenticationService {
             return AuthenticationResponse.builder().token(jwtToken).build();
         }
         else if(savedUser.getPassword()==null){
+            savedUser.setName(request.getName());
             savedUser.setPassword(passwordEncoder.encode(request.getPassword()));
             savedUser.setPhoneNumber(request.getPhoneNumber());
             userRepository.save(savedUser);
             var jwtToken=jwtService.generateToken(savedUser);
             return AuthenticationResponse.builder().token(jwtToken).build();
         }
-        return null;
+        return AuthenticationResponse.builder().build();
     }
 
     public AuthenticationResponse authenticate(User request) {

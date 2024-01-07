@@ -7,7 +7,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -26,7 +28,7 @@ public class User extends BaseModel implements UserDetails {
     @Column
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Group> groups;
 
@@ -37,18 +39,21 @@ public class User extends BaseModel implements UserDetails {
     @Enumerated(EnumType.STRING)
     @JsonIgnore
     private Role role;
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "createdBy",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Expense> createdExpenses;
 
-    @OneToMany(mappedBy="user",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="user",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<UserExpense> userExpenses;
 
-    @OneToMany(mappedBy = "createdBy")
+    @OneToMany(mappedBy = "createdBy",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<UserExpense> createdUserExpenses;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return Arrays.asList(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
@@ -75,4 +80,17 @@ public class User extends BaseModel implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+
+
+   public boolean equals(Object obj){
+        User u1=(User) obj;
+        if(this.getId()==u1.getId() && this.getEmail().equals(u1.getEmail()))
+            return true;
+        else
+            return false;
+    }
+
+
 }

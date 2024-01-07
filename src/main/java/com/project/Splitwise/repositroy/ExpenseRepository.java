@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ExpenseRepository extends JpaRepository<Expense,Integer> {
     @Query("SELECT e FROM Expense e WHERE e.group.id = ?1 and e.createdBy.id=?2")
@@ -16,6 +17,8 @@ public interface ExpenseRepository extends JpaRepository<Expense,Integer> {
 
     @Transactional
     @Modifying
-//    @Query("DELETE FROM Expense e WHERE e.id = ?1 AND e.createdBy = ?2")
+   // @Query("DELETE FROM Expense e WHERE e.id = ?1 AND e.createdBy = ?2")
     void deleteByIdAndCreatedBy(int expenseId, User owner);
+
+    List<Expense> findByGroup(Group group);
 }

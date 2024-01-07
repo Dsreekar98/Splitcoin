@@ -21,7 +21,7 @@ public class Expense extends BaseModel {
     @Enumerated(EnumType.STRING)
     private Currency currency;
     @JsonIgnore
-    @OneToMany(mappedBy = "expense" ,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "expense" ,cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<UserExpense> userExpenses;
 
     @JsonIgnore

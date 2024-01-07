@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
             jwt = authHeader.substring(7);
-            userEmail = jwtService.extractUserName(jwt);//// TODO: 14-12-2023  extract the userEmail from JWT token
+            userEmail = jwtService.extractUserName(jwt);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 if (jwtService.isTokenValid(jwt, userDetails)) {
@@ -51,8 +51,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-                filterChain.doFilter(request, response);
             }
+            filterChain.doFilter(request, response);
         }
     }
 }

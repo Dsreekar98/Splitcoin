@@ -49,7 +49,6 @@ public class UserController {
                 }
             }
         }
-        //List<User> savedUsers=userRepository.saveAll(users);
         return ResponseEntity.ok("{saved:true}");
     }
 
@@ -79,14 +78,11 @@ public class UserController {
         }
         if(passwordFunctions.checkPassword(userLoginDetails.getPassword(),userFromDb.getPassword()))
         {
-            System.out.println("Passowrd Matched");
             return new ResponseEntity<String>("Successfully logged in",HttpStatus.ACCEPTED);
         }
         else
         {
-            System.out.println("Incorrect Password");
             return new ResponseEntity<String>("Successfully logged in",HttpStatus.NOT_FOUND);
         }
-
     }
 }
