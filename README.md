@@ -2,7 +2,7 @@
 Welcome to the Splitcoin Backend API! This project is built using Spring Boot and provides endpoints for managing user accounts, groups, expenses, and settlements. The API is hosted on Render (Please note: the service may experience cold starts on the free account, so expect some delay initially).
 
 # Authorization
-The Splitcoin API uses JSON Web Tokens (JWT) for authorization. To access protected endpoints, include the JWT token in the Authorization header of your requests.
+JWT tokens are used for authentication. Tokens are generated and returned upon successful account creation or login. Include the token in the Authorization header for secured access to the API.
 
 # Settlement Logic
 The backend employs a sophisticated settlement logic based on a heap-based solution to efficiently resolve debts among users within a group. Here's a brief overview:
