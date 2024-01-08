@@ -1,5 +1,5 @@
 # Splitcoin Backend API
-Welcome to the Splitcoin Backend API! This project is built using Spring Boot and provides endpoints for managing user accounts, groups, expenses, and settlements. The API is hosted on Render (Please note: the service may experience cold starts on the free account, so expect some delay initially).
+Welcome to the Splitcoin Backend API! This project is built using Spring Boot and provides endpoints for managing user accounts, groups, expenses, and settlements. The API is hosted on Render (https://splitcoinv2.onrender.com/) (Please note: the service may experience cold starts on the free account, so expect some delay initially).
 
 # Authorization
 JWT tokens are used for authentication. Tokens are generated and returned upon successful account creation or login. Include the token in the Authorization header for secured access to the API.
