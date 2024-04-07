@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         System.out.println("Setting up cors-------------");
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000","http://192.168.1.7:3000","https://splitcoinapp.vercel.app") // Add your React app's origin
+                .allowedOrigins("http://localhost:3000","http://192.168.1.14:3000","https://splitcoinapp.vercel.app") // Add your React app's origin
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .exposedHeaders("Authorization")

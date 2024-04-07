@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  SpringOnLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://splitcoinbucket/
+      Handler: com.project.Splitwise.StreamLambdaHandler::handleRequest
+      Runtime: java17
+      Architectures:
+        - x86_64
+      MemorySize: 2048
+      SnapStart:
+        ApplyOn: "PublishedVersions"
+      Events:
+        SplitCoin:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY

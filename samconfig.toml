@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "SplitCoin"
+region = "eu-north-1"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
+s3_bucket = "splitcoinbucket"
+resolve_s3 = false
+s3_prefix = "SplitCoin"

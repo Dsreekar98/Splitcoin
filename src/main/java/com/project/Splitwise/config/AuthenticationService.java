@@ -4,6 +4,7 @@ import com.project.Splitwise.model.AuthenticationResponse;
 import com.project.Splitwise.model.Role;
 import com.project.Splitwise.model.User;
 import com.project.Splitwise.repositroy.UserRepository;
+import com.project.Splitwise.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
     public AuthenticationResponse register(User request) {
         User savedUser=userRepository.findByEmail(request.getEmail());
         if (savedUser == null) {
@@ -29,6 +31,10 @@ public class AuthenticationService {
                     .role(Role.USER)
                     .build();
             userRepository.save(user);
+            String body="Hi "+user.getName()+",\n\nWelcome to Splitcoin! Manage shared expenses effortlessly with friends, roommates, or partners. Organize, track, and settle up with ease. Let's get started!\n\n" +
+                    "Thank you,\n" +
+                    "SplitCoin Team";
+            emailService.sendEmail(user.getEmail(), "Welcome to Splitcoin",body);
             var jwtToken=jwtService.generateToken(user);
             return AuthenticationResponse.builder().token(jwtToken).build();
         }
